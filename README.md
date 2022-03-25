@@ -19,7 +19,7 @@ Navigate to /backend and run in your terminal:
 
 Navigate to /Application and run execute ```Application.exe```
 
-To build a new .exe nativate to /frontendV2 and simply do
+To build a new .exe navigate to /frontendV2 and simply do
 
 ```npm start``` - a new folder with an executable will be created!
 
