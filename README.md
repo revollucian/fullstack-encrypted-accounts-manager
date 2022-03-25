@@ -4,7 +4,9 @@
 *Both front-end and back-end are built with JavaScript and NodeJS, the desktop application is an Electron 32bit app.*
 
 
-#Screenshots 🎉
+Screenshots! 🎉
+
+
 
 **Login screen**
 
@@ -26,6 +28,7 @@
 
 ![alt text](https://raw.githubusercontent.com/revollucian/fullstack-encrypted-accounts-manager/main/images/chrome_NSef2p8agp.png)
 
+```Besides the functions shown you can change the password, master password and delete/modify accounts as you wish.```
 
 **STARTING THE BACKEND**
 
