@@ -1,0 +1,16 @@
+{
+  "name": "frontendv2",
+  "version": "1.0.0",
+  "description": "Account manager front-end",
+  "main": "init.js",
+  "scripts": {
+    "start": "electron-packager ."
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "alpinejs": "^3.7.0",
+    "electron": "^16.0.4",
+    "electron-packager": "^15.4.0"
+  }
+}

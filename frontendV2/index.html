@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+
+
+
+
+<!-- Written with <3 by Lucian Trasca -->
+
+
+
+<!-- @@@@ PLEASE NOTE: the app will not show anything unless the backend is running !!! @@@@ -->
+
+<!-- To start the backend go to /backend and type npm start in your terminal -->
+<!-- Also make sure your machine has NodeJS installed when doing this! -->
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Account manager</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+
+
+        <!-- import tailwind for styling -->
+        <link href="css/tailwind.css" rel="stylesheet">
+
+
+
+        <!-- importing our cool font -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;1,100;1,200;1,300;1,400;1,500;1,600&display=swap" rel="stylesheet">
+
+
+        <!-- alpinejs for popups - Alpine JS is made by Caleb Porzio (https://github.com/calebporzio) -->
+        <script src="js/alpinejs(ignore)/alpinejs.min.js" defer></script>
+
+
+        <!-- jquery to help us with quering elements -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" defer></script>
+
+
+        <!-- AES encryption library for Javascript -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+
+
+
+
+        <!-- IMPORTANT !!! This is the Javascript sourcecode for the frontend logic  -->
+
+
+        <!-- Functions for talking to the backend API -->
+        <script src="js/APIHelpers.js"></script>
+
+
+        <!-- Functions that manage window elements -->
+        <script src="js/WindowHelpers.js"></script>
+
+
+        <!-- Functions used to add HTML or remove it -->
+        <script src="js/HTMLHelpers.js"></script>
+
+        
+        <!-- Encrypting and decrypting strings -->
+        <script src="js/AESEncryption.js"></script>
+
+
+        <!-- AlpineJS variables -->
+        <script src="js/AlpineHelpers.js"></script>
+
+
+
+
+
+        
+    </head>
+
+    <!-- data() represents AlpineJS variables  -->
+
+    <body id="main" x-data="data()">
+
+        <!-- applying our font to the whole page -->
+
+        <style>
+            body{
+                font-family: 'Poppins', sans-serif;
+            }
+            [x-cloak] { display: none }
+        </style>
+
+
+                    <!-- The start of this document is a lot of HTML used for styling and layout, some of it is relevant to the logic -->
+                    <!-- The popups at the start can just be collapsed in your text editor, makes for easier viewing -->
+
+
+
+
+                   <!-- Add account pop-up -->
+
+                   <div class="absolute w-screen h-screen bg-gray-100 z-20 flex items-center justify-center" style="background-color: rgba(0, 0, 0, 0.555)" 
+                    x-cloak
+                    x-show="create"
+                    x-transition:enter="ease-out duration-300" 
+                    x-transition:enter-start="opacity-0 scale-90" 
+                    x-transition:enter-end="opacity-100 scale-100" 
+                    x-transition:leave="ease-in duration-300" 
+                    x-transition:leave-start="opacity-100 scale-100"
+                    x-transition:leave-end="opacity-0 scale-90"
+                    >
+
+                        <div class="w-96 h-96 bg-white rounded-md shadow-sm flex flex-col px-4 py-4">
+
+                            <div class="flex justify-between">
+                            <div class="flex flex-col">
+                                    <span class="text-black text-xl font-semibold">Add account</span>
+                                    <span class="text-gray-400 text-sm mt-1">Add an account using the form below</span>
+                            </div>
+                                    <svg class="cursor-pointer" width="16" height="16" xmlns="http://www.w3.org/2000/svg" @click="create = false" viewBox="0 0 24 24" fill-rule="evenodd" clip-rule="evenodd"><path d="M12 11.293l10.293-10.293.707.707-10.293 10.293 10.293 10.293-.707.707-10.293-10.293-10.293 10.293-.707-.707 10.293-10.293-10.293-10.293.707-.707 10.293 10.293z"/></svg>
+                        </div>
+
+                            <input class="w-full h-10 outline-none rounded-md mt-5 px-3 text-sm" id="account_name" placeholder="Account name" style="border-style: solid; border-width: 1px; border-color: rgb(182, 182, 182);" type="text"/>
+                            <input class="w-full h-10 outline-none rounded-md mt-5 px-3 text-sm" id="account_username" placeholder="Username" style="border-style: solid; border-width: 1px; border-color: rgb(182, 182, 182);" type="text"/>
+
+                            <input class="w-full h-10 outline-none rounded-md mt-5 px-3 text-sm" id="account_password" placeholder="Password" style="border-style: solid; border-width: 1px; border-color: rgb(182, 182, 182);" type="text"/>
+                            <textarea class="w-full h-18 outline-none rounded-md mt-5 px-3 text-sm text-gray-400" id="account_description" placeholder="Description" style="border-style: solid; border-width: 1px; border-color: rgb(182, 182, 182);" type="text">Put in a description here :)</textarea>
+                            <div class="w-full py-3 h-10 bg-gray-900 rounded-md mt-5 flex items-center justify-center cursor-pointer"
+                            onclick="addAccount()"
+                            @click="create = false"
+                            >
+                            <span class="text-xs text-white">Add account</span>
+
+                        </div>
+
+                        </div>
+
+                   </div>
+
+
+                   <!-- Modify account pop-up -->
+
+                   <div class="absolute w-screen h-screen bg-gray-100 z-20 flex items-center justify-center" style="background-color: rgba(0, 0, 0, 0.555)" 
+                   x-cloak
+                   x-show="modify"
+                   x-transition:enter="ease-out duration-300" 
+                   x-transition:enter-start="opacity-0 scale-90" 
+                   x-transition:enter-end="opacity-100 scale-100" 
+                   x-transition:leave="ease-in duration-300" 
+                   x-transition:leave-start="opacity-100 scale-100"
+                   x-transition:leave-end="opacity-0 scale-90"
+                   >
+       
+                       <div class="w-96 h-96 bg-white rounded-md shadow-sm flex flex-col px-4 py-4">
+       
+                           <div class="flex justify-between">
+                           <div class="flex flex-col">
+                                   <span class="text-black text-xl font-semibold">Modify account</span>
+                                   <span class="modifyPopupname text-gray-400 text-sm mt-1"></span>
+                           </div>
+                                   <svg class="cursor-pointer" width="16" height="16" xmlns="http://www.w3.org/2000/svg" @click="modify = false" viewBox="0 0 24 24" fill-rule="evenodd" clip-rule="evenodd"><path d="M12 11.293l10.293-10.293.707.707-10.293 10.293 10.293 10.293-.707.707-10.293-10.293-10.293 10.293-.707-.707 10.293-10.293-10.293-10.293.707-.707 10.293 10.293z"/></svg>
+                        </div>
+       
+                           <input class="w-full h-10 outline-none rounded-md mt-5 px-3 text-sm" id="account_name_modify" placeholder="Account name" style="border-style: solid; border-width: 1px; border-color: rgb(182, 182, 182);" type="text"/>
+                           <input class="w-full h-10 outline-none rounded-md mt-5 px-3 text-sm" id="account_username_modify" placeholder="Username" style="border-style: solid; border-width: 1px; border-color: rgb(182, 182, 182);" type="text"/>
+       
+                           <input class="w-full h-10 outline-none rounded-md mt-5 px-3 text-sm" id="account_password_modify" placeholder="Password" style="border-style: solid; border-width: 1px; border-color: rgb(182, 182, 182);" type="text"/>
+                           <textarea class="w-full h-18 outline-none rounded-md mt-5 px-3 text-sm text-gray-400" id="account_description_modify" placeholder="Description" style="border-style: solid; border-width: 1px; border-color: rgb(182, 182, 182);" type="text">Put in a description here :)</textarea>
+                           
+                           <!-- We assign an ID here when we first launch the pop-up -->
+
+                           <div id="" class="modifyPopup w-full py-3 h-10 bg-gray-900 rounded-md mt-5 flex items-center justify-center cursor-pointer"
+                           onclick="modifyAccount(this.id)"
+                           @click="modify = false"
+                           >
+       
+                           <span class="text-xs text-white">Modify account</span>
+       
+                       </div>
+       
+                       </div>
+       
+                   </div>
+
+
+                   
+                   <!-- Delete account pop-up -->
+
+                   <div class="absolute w-screen h-screen bg-gray-100 z-20 flex items-center justify-center" style="background-color: rgba(0, 0, 0, 0.555)" 
+                   x-cloak
+                   x-show="del"
+                   x-transition:enter="ease-out duration-300" 
+                   x-transition:enter-start="opacity-0 scale-90" 
+                   x-transition:enter-end="opacity-100 scale-100" 
+                   x-transition:leave="ease-in duration-300" 
+                   x-transition:leave-start="opacity-100 scale-100"
+                   x-transition:leave-end="opacity-0 scale-90"
+                   >
+       
+                       <div class="w-96 h-36 bg-white rounded-md shadow-sm flex flex-col px-4 py-4">
+       
+                           <div class="flex justify-between">
+                           <div class="flex flex-col">
+                                   <span class="text-black text-xl font-semibold">Delete account</span>
+                                   <span class="deletePopupname text-gray-400 text-sm mt-1">Are you sure ?</span>
+                           </div>
+                                   <svg class="cursor-pointer" width="16" height="16" xmlns="http://www.w3.org/2000/svg" @click="del = false" viewBox="0 0 24 24" fill-rule="evenodd" clip-rule="evenodd"><path d="M12 11.293l10.293-10.293.707.707-10.293 10.293 10.293 10.293-.707.707-10.293-10.293-10.293 10.293-.707-.707 10.293-10.293-10.293-10.293.707-.707 10.293 10.293z"/></svg>
+                        </div>
+       
+                         
+                           
+                           <!-- We assign an ID here when we first launch the pop-up -->
+
+                           <div class="flex w-full gap-5">
+
+                                <div id="" class="deletePopup w-full py-3 h-10 bg-gray-900 rounded-md mt-5 flex items-center justify-center cursor-pointer"
+                                onclick="deleteAccount(this.id)"
+                                @click="del = false"
+                                >
+            
+                                <span class="text-xs text-white">Yes, delete</span>
+            
+                                </div>
+
+                                <div id="" class="w-full py-3 h-10 bg-white rounded-md mt-5 flex items-center justify-center cursor-pointer"        
+                                @click="del=false"
+                                >
+         
+                                <span class="text-xs text-black">Go back</span>
+         
+                              </div>
+
+                           </div>
+                    
+       
+                       </div>
+       
+                   </div>
+
+
+                   
+                    <!-- Signup pop-up -->
+
+                    <div class="absolute w-screen h-screen bg-gray-100 z-20 flex items-center justify-center" style="background-color: rgba(0, 0, 0, 0.555)" 
+                    x-cloak
+                    x-show="signup"
+                    x-transition:enter="ease-out duration-300" 
+                    x-transition:enter-start="opacity-0 scale-90" 
+                    x-transition:enter-end="opacity-100 scale-100" 
+                    x-transition:leave="ease-in duration-300" 
+                    x-transition:leave-start="opacity-100 scale-100"
+                    x-transition:leave-end="opacity-0 scale-90"
+                    >
+
+                        <div class="w-96 h-96 bg-white rounded-md shadow-sm flex flex-col px-4 py-4">
+
+                            <div class="flex justify-between">
+                            <div class="flex flex-col">
+                                    <span class="text-black text-xl font-semibold">Sign up</span>
+                                    <span class="text-gray-400 text-sm mt-1">Make an account with the form below</span>
+                            </div>
+                                    <svg class="cursor-pointer" width="16" height="16" xmlns="http://www.w3.org/2000/svg" @click="signup = false" viewBox="0 0 24 24" fill-rule="evenodd" clip-rule="evenodd"><path d="M12 11.293l10.293-10.293.707.707-10.293 10.293 10.293 10.293-.707.707-10.293-10.293-10.293 10.293-.707-.707 10.293-10.293-10.293-10.293.707-.707 10.293 10.293z"/></svg>
+                        </div>
+
+                            <input class="w-full h-10 outline-none rounded-md mt-5 px-3 text-sm" id="account_username_register" placeholder="Username" style="border-style: solid; border-width: 1px; border-color: rgb(182, 182, 182);" type="text"/>
+                            <input class="w-full h-10 outline-none rounded-md mt-5 px-3 text-sm" id="account_email_register" placeholder="Email" style="border-style: solid; border-width: 1px; border-color: rgb(182, 182, 182);" type="text"/>
+                            <input class="w-full h-10 outline-none rounded-md mt-5 px-3 text-sm" id="account_password_register" placeholder="Password" style="border-style: solid; border-width: 1px; border-color: rgb(182, 182, 182);" type="password"/>
+                            <input class="w-full h-10 outline-none rounded-md mt-5 px-3 text-sm" id="account_password_master" placeholder="Master password" style="border-style: solid; border-width: 1px; border-color: rgb(182, 182, 182);" type="password"/>
+
+                           
+                            <div class="w-full py-3 h-10 bg-gray-900 rounded-md mt-5 flex items-center justify-center cursor-pointer"
+                            onclick="signup()"
+                            >
+
+                                <span class="text-xs text-white">Sign up</span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                     <!-- Change master password pop-up -->
+
+                     <div class="absolute w-screen h-screen bg-gray-100 z-20 flex items-center justify-center" style="background-color: rgba(0, 0, 0, 0.555)" 
+                     x-cloak
+                     x-show="edit_master"
+                     x-transition:enter="ease-out duration-300" 
+                     x-transition:enter-start="opacity-0 scale-90" 
+                     x-transition:enter-end="opacity-100 scale-100" 
+                     x-transition:leave="ease-in duration-300" 
+                     x-transition:leave-start="opacity-100 scale-100"
+                     x-transition:leave-end="opacity-0 scale-90"
+                     >
+ 
+                         <div class="w-96 h-70 bg-white rounded-md shadow-sm flex flex-col px-4 py-4">
+ 
+                             <div class="flex justify-between">
+                             <div class="flex flex-col">
+                                     <span class="text-black text-xl font-semibold">Edit master password</span>
+                                     <span class="text-gray-400 text-sm mt-1">Use the old password to add a new one</span>
+                             </div>
+                                     <svg class="cursor-pointer" width="16" height="16" xmlns="http://www.w3.org/2000/svg" @click="edit_master = false" viewBox="0 0 24 24" fill-rule="evenodd" clip-rule="evenodd"><path d="M12 11.293l10.293-10.293.707.707-10.293 10.293 10.293 10.293-.707.707-10.293-10.293-10.293 10.293-.707-.707 10.293-10.293-10.293-10.293.707-.707 10.293 10.293z"/></svg>
+                         </div>
+ 
+                             <input class="w-full h-10 outline-none rounded-md mt-5 px-3 text-sm" id="master_old" placeholder="Old master password" style="border-style: solid; border-width: 1px; border-color: rgb(182, 182, 182);" type="text"/>
+                             <input class="w-full h-10 outline-none rounded-md mt-5 px-3 text-sm" id="master_new" placeholder="New master password" style="border-style: solid; border-width: 1px; border-color: rgb(182, 182, 182);" type="text"/>
+                            
+                             <div class="w-full py-3 h-10 bg-gray-900 rounded-md mt-5 flex items-center justify-center cursor-pointer"
+                             onclick="changeMasterPassword()"
+                            
+                             >
+ 
+                                 <span class="text-xs text-white">Change master password</span>
+ 
+                             </div>
+ 
+                         </div>
+ 
+                     </div>
+
+
+
+                    <!-- Change password pop-up -->
+
+                    <div class="absolute w-screen h-screen bg-gray-100 z-20 flex items-center justify-center" style="background-color: rgba(0, 0, 0, 0.555)" 
+                    x-cloak
+                    x-show="edit_password"
+                    x-transition:enter="ease-out duration-300" 
+                    x-transition:enter-start="opacity-0 scale-90" 
+                    x-transition:enter-end="opacity-100 scale-100" 
+                    x-transition:leave="ease-in duration-300" 
+                    x-transition:leave-start="opacity-100 scale-100"
+                    x-transition:leave-end="opacity-0 scale-90"
+                    >
+
+                        <div class="w-96 h-70 bg-white rounded-md shadow-sm flex flex-col px-4 py-4">
+
+                            <div class="flex justify-between">
+                            <div class="flex flex-col">
+                                    <span class="text-black text-xl font-semibold">Edit password</span>
+                                    <span class="text-gray-400 text-sm mt-1">Enter a new password to use</span>
+                            </div>
+                                    <svg class="cursor-pointer" width="16" height="16" xmlns="http://www.w3.org/2000/svg" @click="edit_password = false" viewBox="0 0 24 24" fill-rule="evenodd" clip-rule="evenodd"><path d="M12 11.293l10.293-10.293.707.707-10.293 10.293 10.293 10.293-.707.707-10.293-10.293-10.293 10.293-.707-.707 10.293-10.293-10.293-10.293.707-.707 10.293 10.293z"/></svg>
+                        </div>
+
+                            <input class="w-full h-10 outline-none rounded-md mt-5 px-3 text-sm" id="new_password" placeholder="New password" style="border-style: solid; border-width: 1px; border-color: rgb(182, 182, 182);" type="text"/>
+                        
+                            <div class="w-full py-3 h-10 bg-gray-900 rounded-md mt-5 flex items-center justify-center cursor-pointer"
+                            onclick="changePassword()"
+                            >
+
+                                <span class="text-xs text-white">Change password</span>
+                            </div>
+                        </div>
+                    </div>
+        
+
+
+
+        <!-- Main page -->
+
+
+        <div class="w-screen h-screen bg-gray-300 flex flex-col flex-grow-0">
+
+
+            <!-- Main nav section -->
+
+            <div class="w-full bg-gray-900 px-8 flex justify-between items-center flex-shrink-0" style="height: 10%;">
+                <div class="flex gap-3 items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M10 16c0-1.104.896-2 2-2s2 .896 2 2c0 .738-.404 1.376-1 1.723v2.277h-2v-2.277c-.596-.347-1-.985-1-1.723zm11-6v14h-18v-14h3v-4c0-3.313 2.687-6 6-6s6 2.687 6 6v4h3zm-13 0h8v-4c0-2.206-1.795-4-4-4s-4 1.794-4 4v4zm11 2h-14v10h14v-10z"/></svg>
+                    <span class="text-white font-bold">Account Manager</span>
+                </div>
+
+                <div>
+                    <span id="top_message" class="text-white">You're not logged in, <span class="font-bold">log in</span></span>
+                </div>
+            </div>
+
+
+            <!-- Login section -->
+
+            <div id="login" class="flex items-center justify-center shadow-sm flex-grow-0 hidden" style="height: 90%;">
+                <div class="bg-white rounded-md w-96 h-72 flex flex-col px-4 py-4">
+
+                    <span class="text-black text-xl font-semibold">Log in</span>
+
+                    <span class="text-gray-400 text-sm mt-1">Use your account to log in</span>
+
+                    <input class="w-full h-10 outline-none rounded-md mt-5 px-3 text-sm" id="username_field" placeholder="Username" style="border-style: solid; border-width: 1px; border-color: rgb(182, 182, 182);" type="text"/>
+
+                    <input class="w-full h-10 outline-none rounded-md mt-5 px-3 text-sm" id="password_field" placeholder="Password" style="border-style: solid; border-width: 1px; border-color: rgb(182, 182, 182);" type="password"/>
+
+                    <div class="w-full h-10 bg-gray-900 rounded-md mt-5 flex items-center justify-center cursor-pointer"
+
+                        onclick="login()"
+                    
+                    >
+
+                        <span class="text-xs text-white">Log in</span>
+
+                    </div>
+
+                    <span class="text-xs text-black mt-5 w-full text-center">Dont have an account? <span class="font-semibold cursor-pointer" @click="signup = true">Sign up.</span></span>
+
+                </div>
+            </div>
+
+
+
+            <div id="dashboard" class="w-full flex hidden" style="height: 90%;">
+
+                    <!-- sidebar with the menu options -->
+
+                <div class="h-full w-64 bg-white flex flex-col px-8 py-10 justify-between flex-shrink-0">
+
+                    <div class="flex flex-col gap-8">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd"><path d="M24 22h-24v-20h24v20zm-1-19h-22v18h22v-18zm-4 13v1h-4v-1h4zm-6.002 1h-10.997l-.001-.914c-.004-1.05-.007-2.136 1.711-2.533.789-.182 1.753-.404 1.892-.709.048-.108-.04-.301-.098-.407-1.103-2.036-1.305-3.838-.567-5.078.514-.863 1.448-1.359 2.562-1.359 1.105 0 2.033.488 2.545 1.339.737 1.224.542 3.033-.548 5.095-.057.106-.144.301-.095.41.14.305 1.118.531 1.83.696 1.779.41 1.773 1.503 1.767 2.56l-.001.9zm-9.998-1h8.999c.003-1.014-.055-1.27-.936-1.473-1.171-.27-2.226-.514-2.57-1.267-.174-.381-.134-.816.119-1.294.921-1.739 1.125-3.199.576-4.111-.332-.551-.931-.855-1.688-.855-.764 0-1.369.31-1.703.871-.542.91-.328 2.401.587 4.09.259.476.303.912.13 1.295-.342.757-1.387.997-2.493 1.252-.966.222-1.022.478-1.021 1.492zm18-3v1h-6v-1h6zm0-3v1h-6v-1h6zm0-3v1h-6v-1h6z"/></svg>
+                        <span class="text-sm">My accounts<span>
+                    </div>
+
+                    <div class="flex items-center gap-3 cursor-pointer" @click="edit_password = true">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M16 2c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6 2.691-6 6-6zm0-2c-4.418 0-8 3.582-8 8s3.582 8 8 8 8-3.582 8-8-3.582-8-8-8zm-5.405 16.4l-1.472 1.6h-3.123v2h-2v2h-2v-2.179l5.903-5.976c-.404-.559-.754-1.158-1.038-1.795l-6.865 6.95v5h6v-2h2v-2h2l2.451-2.663c-.655-.249-1.276-.562-1.856-.937zm7.405-11.4c.551 0 1 .449 1 1s-.449 1-1 1-1-.449-1-1 .449-1 1-1zm0-1c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2z"/></svg>
+                        <span class="text-sm">Edit password<span>
+                    </div>
+
+                    <div class="flex items-center gap-3 cursor-pointer" @click="edit_master = true">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.363 8.464l1.433 1.431-12.67 12.669-7.125 1.436 1.439-7.127 12.665-12.668 1.431 1.431-12.255 12.224-.726 3.584 3.584-.723 12.224-12.257zm-.056-8.464l-2.815 2.817 5.691 5.692 2.817-2.821-5.693-5.688zm-12.318 18.718l11.313-11.316-.705-.707-11.313 11.314.705.709z"/></svg>
+                        <span class="text-sm">Edit master password<span>
+                    </div>
+
+                    </div>
+
+                    <div class="flex flex-col"> 
+                        <div class="flex items-center gap-3 cursor-pointer" onclick="logOut()">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M0 2v20h14v-2h-12v-16h12v-2h-14zm18 7.408l2.963 2.592-2.963 2.592v-1.592h-8v-2h8v-1.592zm-2-4.408v4h-8v6h8v4l8-7-8-7z"/></svg>
+                            <span class="text-sm">Log out<span>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                    <!-- section to the right (main section) -->
+
+
+                <div class="w-full overflow-x-auto relative">
+
+
+                    <!-- blocker overlay - hides some information -->
+
+                    <div id="blocker" class="flex-1 w-full h-full absolute z-10 backdrop-filter backdrop-blur-sm flex items-center justify-center" style="background-color: rgba(0, 0, 0, 0.555)">
+
+                        <div class="bg-white flex gap-3 px-3 items-center rounded-md" style="border-style: solid; border-width: 1px; border-color: rgb(182, 182, 182);">
+
+                            <input class="w-full h-10 outline-none rounded-md text-sm" id="masterpassword_field" placeholder="Master password"  type="password"/>
+                            <svg xmlns="http://www.w3.org/2000/svg" onclick="validateAndShow()" class="w-6 h-6 text-gray-500 cursor-pointer" fill="currentColor" viewBox="0 0 24 24"><path d="M10 16c0-1.104.896-2 2-2s2 .896 2 2c0 .738-.404 1.376-1 1.723v2.277h-2v-2.277c-.596-.347-1-.985-1-1.723zm11-6v14h-18v-14h3v-4c0-3.313 2.687-6 6-6s6 2.687 6 6v4h3zm-13 0h8v-4c0-2.206-1.795-4-4-4s-4 1.794-4 4v4zm11 2h-14v10h14v-10z"/></svg>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- top menu for accounts -->
+
+                    <div class="px-3">
+
+                    <div class="w-full h-16 bg-white mt-3 rounded-md shadow-sm px-3 py-3 flex justify-between">
+
+                        <div class="flex gap-3 items-center h-full cursor-pointer" @click="create=true">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm6 13h-5v5h-2v-5h-5v-2h5v-5h2v5h5v2z"/></svg>
+                            <span>Add account</span>
+                        </div>
+
+                        <div class="flex items-center gap-3 cursor-pointer" onclick="location.reload()">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-black" fill="currentColor" viewBox="0 0 24 24"><path d="M10 16c0-1.104.896-2 2-2s2 .896 2 2c0 .738-.404 1.376-1 1.723v2.277h-2v-2.277c-.596-.347-1-.985-1-1.723zm11-6v14h-18v-14h3v-4c0-3.313 2.687-6 6-6s6 2.687 6 6v4h3zm-13 0h8v-4c0-2.206-1.795-4-4-4s-4 1.794-4 4v4zm11 2h-14v10h14v-10z"/></svg>
+                            <span class="text-sm">Panic lock<span>
+                        </div>
+
+                    </div>
+                    </div>
+
+
+
+                    <!-- space for our accounts -->
+
+                    <div id="accounts" class="px-3">
+             
+                    </div>
+
+            
+                </div>
+            </div>
+        </div>
+
+</body>
+</html>
