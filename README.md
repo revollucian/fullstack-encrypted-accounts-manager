@@ -4,6 +4,28 @@
 *Both front-end and back-end are built with JavaScript and NodeJS, the desktop application is an Electron 32bit app.*
 
 
+#Screenshots 🎉
+
+**Login screen**
+
+![alt text](https://raw.githubusercontent.com/revollucian/fullstack-encrypted-accounts-manager/main/images/chrome_oO1POTLdXP.png)
+
+**Signup screen**
+
+![alt text](https://raw.githubusercontent.com/revollucian/fullstack-encrypted-accounts-manager/main/images/chrome_rh28AVqq9Z.png)
+
+**Master password unlock screen (this decrypts info)**
+
+![alt text](https://raw.githubusercontent.com/revollucian/fullstack-encrypted-accounts-manager/main/images/chrome_hfjNbqQEAw.png)
+
+**Adding an account**
+
+![alt text](https://raw.githubusercontent.com/revollucian/fullstack-encrypted-accounts-manager/main/images/chrome_I88oLnYA8z.png)
+
+**Accounts screen and alert**
+
+![alt text](https://raw.githubusercontent.com/revollucian/fullstack-encrypted-accounts-manager/main/images/chrome_NSef2p8agp.png)
+
 
 **STARTING THE BACKEND**
 
